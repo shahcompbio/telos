@@ -21,6 +21,8 @@ def find_coverage(df):
 		with open(str(temp_cov_output)) as f:
 			cov = f.readline().strip()
 
+		cov = float(cov)
+
 		os.remove(temp_cov_output)
 
 		df.loc[index, 'cov'] = cov

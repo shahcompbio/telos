@@ -4,6 +4,8 @@ import pandas as pd
 
 
 def find_coverage(df):
+	print "finding coverage of BAM files"
+
 	df['cov'] = None
 
 	# TODO: use multiprocessing to parallelize this for-loop

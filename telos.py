@@ -1,8 +1,8 @@
 import argparse
 import pandas as pd
-from telos.find_coverage import find_coverage
-from telos.find_num_tel import find_num_tel
-from telos.estimate_lengths import estimate_lengths
+from scripts.find_coverage import find_coverage
+# from scripts.find_num_tel import find_num_tel
+from scripts.estimate_lengths import estimate_lengths
 
 
 parser = argparse.ArgumentParser()
@@ -13,21 +13,22 @@ parser.add_argument('-o', '--output', type=str,
 
 
 def load_input(input_cells_path):
-	return pd.read_csv(input_cells_path, header=True, index_col=False)
+	return pd.read_csv(input_cells_path, index_col=False)
 
 
 def main():
 	args = parser.parse_args()
 
 	df = load_input(args.input_cells)
+	print df.head()
 
-	assert('BAM_path' in df.columns)
+	assert 'BAM_path' in df.columns
 
 	if 'cov' not in df.columns:
 		df = find_coverage(df)
 
-	if 'num_tel' not in df.columns:
-		df = find_num_tel(df)
+	# if 'num_tel' not in df.columns:
+	# 	df = find_num_tel(df)
 
 	estimate_lengths(df, args.output)
 

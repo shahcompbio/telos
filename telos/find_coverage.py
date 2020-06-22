@@ -1,4 +1,3 @@
-import pysam
 import os
 import subprocess
 import pandas as pd
@@ -27,3 +26,4 @@ def find_coverage(df):
 
 		df.loc[index, 'cov'] = cov
 
+	return df

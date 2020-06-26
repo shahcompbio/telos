@@ -25,7 +25,9 @@ def main():
 	assert 'BAM_path' in df.columns
 
 	if 'cov' not in df.columns:
+		print 'coverage not provided'
 		df = find_coverage(df)
+		print 'done estimating coverage'
 
 	# if 'num_tel' not in df.columns:
 	# 	df = find_num_tel(df)

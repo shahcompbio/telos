@@ -38,83 +38,76 @@ def rule(reads, constants, master):
 	return results
 
 
-class Bam2Telbam(parabam.core.Interface):
-	"""Interface to interact with telomerecat programatically. This interface
-	is also called by the `telomerecat` script"""
 
-	def __init__(
-		self,
-		temp_dir=None,
-		task_size=250000,
+
+def run( 
+		input_paths, 
+		outbam_dir=None, 
+		temp_dir=None, 
+		task_size=250000, 
 		total_procs=8,
 		reader_n=2,
 		verbose=False,
-		announce=True,
-		cmd_run=False,
 	):
-		self.temp_dir = temp_dir
-		self.task_size = task_size
-		self.total_procs = total_procs
-		self.reader_n = reader_n
-		self.verbose = verbose
+	"""The main function for invoking the part of the 
+		program which creates a telbam from a bam
+	Arguments:
+		input_paths (list): The BAM files we wish look for patterns in
+		total_procs (int): The maximum numbers of task that will be run at one time
+		task_size (int): The amount of reads that any one task will process concurrently
+		keep_in_temp (bool): Files will be kept in temp file after processing. 
+			Useful for incorporation into pipelines"""
 
 
-	def run(self, input_paths, outbam_dir=None):
-		"""The main function for invoking the part of the 
-			program which creates a telbam from a bam
-		Arguments:
-			bams (list): The BAM files we wish to run telomerecat telbam on
-			total_procs (int): The maximum numbers of task that will be run at one time
-			task_size (int): The amount of reads that any one task will process concurrently
-			keep_in_temp (bool): Files will be kept in temp file after processing. 
-				Useful for incorporation into pipelines"""
+	subset_types = ["telbam"]
+	tel_pats = ["TTAGGGTTAGGG", "CCCTAACCCTAA"]
 
+	# need to define my constants and engine here:
+	telbam_constants = {"thresh": 1, "tel_pats": tel_pats}
 
-		subset_types = ["telbam"]
-		tel_pats = ["TTAGGGTTAGGG", "CCCTAACCCTAA"]
+	final_output_paths = {}
 
-		# need to define my constants and engine here:
-		telbam_constants = {"thresh": 1, "tel_pats": tel_pats}
+	keep_in_temp = outbam_dir is None
+	if not keep_in_temp:
+		# check if the folder is writable
+		if not os.path.exists(outbam_dir):
+			try:
+				os.makedirs(outbam_dir)
+			except:
+				raise ValueError(f'Error: can not find outbam_dir path and could not make it either: \'{outbam_dir}\'.\n')
+		if not os.access(outbam_dir, os.W_OK | os.X_OK):
+			raise ValueError(f'Error: do not have right permission to write into outbam_dir path: \'{outbam_dir}\'.\n')
 
-		final_output_paths = {}
+	for input_path in input_paths:
 
-		keep_in_temp = outbam_dir is None
-		if not keep_in_temp:
-			# check if the folder is writable
-			if not os.access(outbam_dir, os.W_OK | os.X_OK):
-				raise ValueError(f'Error: do not have right permission to write into outbam_dir path: \'{outbam_dir}\'.\n')
-			if not os.path.exists(outbam_dir):
-				try:
-					os.mkdirs(outbam_dir)
-				except:
-					raise ValueError(f'Error: can not find outbam_dir path and could not make it either: \'{outbam_dir}\'.\n')
+		subset_interface = parabam.Subset(
+			temp_dir=temp_dir,
+			total_procs=total_procs,
+			task_size=task_size,
+			reader_n=reader_n,
+			verbose=verbose,
+			pair_process=True,
+			include_duplicates=True,
+			keep_in_temp=keep_in_temp,
+		)
 
-		for input_path in input_paths:
+		print('input_path', input_path)
+		print('subset_types', subset_types)
+		print('telbam_constants', telbam_constants)
+		print('outbam_dir', outbam_dir)
+		# call to parabam subset
+		telbam_paths = subset_interface.run(
+			input_paths=[input_path],
+			subsets=subset_types,
+			constants=telbam_constants,
+			rule=rule,
+			outbam_dir=outbam_dir
+		)
 
-			subset_interface = parabam.Subset(
-				temp_dir=self.temp_dir,
-				total_procs=self.total_procs,
-				task_size=self.task_size,
-				reader_n=self.reader_n,
-				verbose=self.verbose,
-				pair_process=True,
-				include_duplicates=True,
-				keep_in_temp=keep_in_temp,
-			)
+		gc.collect()
+		final_output_paths.update(telbam_paths)
 
-			# call to parabam subset
-			telbam_paths = subset_interface.run(
-				input_paths=[input_path],
-				subsets=subset_types,
-				constants=telbam_constants,
-				rule=rule,
-				outbam_dir=outbam_dir
-			)
-
-			gc.collect()
-			final_output_paths.update(telbam_paths)
-
-		return final_output_paths
+	return final_output_paths
 
 
 if __name__ == '__main__':
@@ -122,6 +115,5 @@ if __name__ == '__main__':
 
 	input_paths = txt_to_list(argv.input_bams)
 
-	telbam = Bam2Telbam()
-	telbam.run(input_paths, argv.outbam_dir)
+	run(input_paths, argv.outbam_dir)
 

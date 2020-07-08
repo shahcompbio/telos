@@ -6,6 +6,7 @@ import sys
 import os
 import gc
 import parabam
+import time
 from argparse import ArgumentParser
 
 def get_args():
@@ -58,6 +59,16 @@ def run(
 		keep_in_temp (bool): Files will be kept in temp file after processing. 
 			Useful for incorporation into pipelines"""
 
+	if temp_dir is None:
+		temp_dir = "telos_temp_" + str(time.time())
+		temp_dir = temp_dir.replace('.', '_')
+
+	print('temp_dir', temp_dir)
+	if not os.path.exists(temp_dir):
+		try:
+			os.makedirs(temp_dir)
+		except:
+			raise ValueError(f'Error: can not find temp_dir path and could not make it either: \'{temp_dir}\'.\n')
 
 	subset_types = ["telbam"]
 	tel_pats = ["TTAGGGTTAGGG", "CCCTAACCCTAA"]
@@ -106,6 +117,8 @@ def run(
 
 		gc.collect()
 		final_output_paths.update(telbam_paths)
+
+	os.rmdir(temp_dir)
 
 	return final_output_paths
 

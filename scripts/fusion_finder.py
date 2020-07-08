@@ -118,7 +118,7 @@ def run(
 		gc.collect()
 		final_output_paths.update(telbam_paths)
 
-	os.rmdir(temp_dir)
+	# os.rmdir(temp_dir)
 
 	return final_output_paths
 

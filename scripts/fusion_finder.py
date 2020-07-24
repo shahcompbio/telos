@@ -126,11 +126,18 @@ def run(
 		gc.collect()
 		final_output_paths.update(telbam_paths)
 
+		for k, v in telbam_paths.iteritems():
+			for key, item in v.iteritems():
+				temp_output_path = item
+
 		print 'telbam_paths', telbam_paths
+		print 'temp_output_path', temp_output_path
+
+
+	shutil.move(temp_output_path, outbam_dir)
 
 	shutil.rmtree(temp_dir, ignore_errors=True)
 
-	print 'final_output_paths', final_output_paths
 	return final_output_paths
 
 

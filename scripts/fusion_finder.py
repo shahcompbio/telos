@@ -133,8 +133,11 @@ def run(
 		print 'telbam_paths', telbam_paths
 		print 'temp_output_path', temp_output_path
 
+	basename = os.path.basename(temp_output_path)
+	new_basename = basename.replace('_telbam', '_fusions')
+	final_output = str(outbam_dir) + '/' + str(new_basename)
 
-	shutil.move(temp_output_path, outbam_dir)
+	shutil.move(temp_output_path, final_output)
 
 	shutil.rmtree(temp_dir, ignore_errors=True)
 

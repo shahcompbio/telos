@@ -5,19 +5,13 @@ def get_number_of_telomeres(df, cn):
 	""" Estimate the number of telomeres for each cell in df using the hmmcopy information in cn. """
 	# add column for number of telomeres
 	df['num_tel'] = None
-	print df.head()
-	print cn.head()
 	for key, row in df.iterrows():
-		print 'key', key
 		cell_id = os.path.basename(row['BAM_path']).split('.')[0]
 		cell_df = cn.loc[cell_id]
 		num_tel = 0
 		for chrom, group in cell_df.groupby('chr'):
-			print 'chrom', chrom
 			temp = 2 * group['state'].mode().values[0]
-			print 'chrom', chrom, 'num', temp
 			num_tel += temp  # add chromosome arm's ploidy to running total
-		print 'num_tel', num_tel
 		df.loc[key, 'num_tel'] = num_tel
 
 	return df
@@ -34,7 +28,7 @@ def find_num_tel(df, hmm_file_paths):
 	except:
 		raise ValueError("Error when loading in hmmcopy files")
 
-	# read hmmfiles into 
+	# read hmmfiles into dataframe
 	cn_pieces = []
 	for f in hmm_files:
 		piece = pd.read_csv(

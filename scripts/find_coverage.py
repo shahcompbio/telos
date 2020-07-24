@@ -26,13 +26,7 @@ def find_coverage(df):
 				nreads_mapped += int(fields[2])
 				nreads_unmapped += int(fields[3])
 
-		# print "mapped:", nreads_mapped
-		# print "unmapped:", nreads_unmapped
-		# print "genome length", total_bp
-
 		cov = (nreads_unmapped + nreads_mapped) * 150. / total_bp
-
-		# print "coverage", cov
 
 		df.loc[index, 'cov'] = cov
 

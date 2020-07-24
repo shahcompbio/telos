@@ -19,7 +19,11 @@ def get_args():
 
 def txt_to_list(input_bams):
 	with open(input_bams, 'r') as f:
-		out = [line.strip() for line in f]
+		out = []
+		for line in f:
+			entry = line.strip()
+			if ".bam" in entry:
+				out.append(entry)
 	return out
 
 
@@ -63,12 +67,13 @@ def run(
 		temp_dir = "telos_temp_" + str(time.time())
 		temp_dir = temp_dir.replace('.', '_')
 
-	print('temp_dir', temp_dir)
+	print 'temp_dir', temp_dir
 	if not os.path.exists(temp_dir):
 		try:
 			os.makedirs(temp_dir)
 		except:
-			raise ValueError(f'Error: can not find temp_dir path and could not make it either: \'{temp_dir}\'.\n')
+			# raise ValueError(f'Error: can not find temp_dir path and could not make it either: \'{temp_dir}\'.\n')
+			raise ValueError('Error: can not find temp_dir path and could not make it either')
 
 	subset_types = ["telbam"]
 	tel_pats = ["TTAGGGTTAGGG", "CCCTAACCCTAA"]
@@ -85,9 +90,11 @@ def run(
 			try:
 				os.makedirs(outbam_dir)
 			except:
-				raise ValueError(f'Error: can not find outbam_dir path and could not make it either: \'{outbam_dir}\'.\n')
+				# raise ValueError(f'Error: can not find outbam_dir path and could not make it either: \'{outbam_dir}\'.\n')
+				raise ValueError('Error: can not find outbam_dir path and could not make it either')
 		if not os.access(outbam_dir, os.W_OK | os.X_OK):
-			raise ValueError(f'Error: do not have right permission to write into outbam_dir path: \'{outbam_dir}\'.\n')
+			# raise ValueError(f'Error: do not have right permission to write into outbam_dir path: \'{outbam_dir}\'.\n')
+			raise ValueError('Error: do not have right permission to write into outbam_dir path')
 
 	for input_path in input_paths:
 
@@ -102,10 +109,10 @@ def run(
 			keep_in_temp=keep_in_temp,
 		)
 
-		print('input_path', input_path)
-		print('subset_types', subset_types)
-		print('telbam_constants', telbam_constants)
-		print('outbam_dir', outbam_dir)
+		print 'input_path', input_path
+		print 'subset_types', subset_types
+		print 'telbam_constants', telbam_constants
+		print 'outbam_dir', outbam_dir
 		# call to parabam subset
 		telbam_paths = subset_interface.run(
 			input_paths=[input_path],
@@ -128,9 +135,9 @@ if __name__ == '__main__':
 
 	input_paths = txt_to_list(argv.input_bams)
 
-	print(input_paths)
+	print input_paths
 
 	for bam in input_paths:
-		print(bam)
+		print bam
 		run([bam], argv.outbam_dir)
 

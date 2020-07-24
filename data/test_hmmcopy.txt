@@ -1,0 +1,1 @@
+/work/shah/tantalus/SC-3442/results/hmmcopy/A90554B_reads.csv.gz

@@ -1,3 +1,4 @@
+BAM_path
 /juno/work/shah/tantalus/single_cell_indexing/bam/A90554B/grch37/BWA_MEM_0_7_6A/numlanes_9/SC-3442/SA922-A90554B-R29-C35.bam
 /juno/work/shah/tantalus/single_cell_indexing/bam/A90554B/grch37/BWA_MEM_0_7_6A/numlanes_9/SC-3442/SA922-A90554B-R29-C36.bam
 /juno/work/shah/tantalus/single_cell_indexing/bam/A90554B/grch37/BWA_MEM_0_7_6A/numlanes_9/SC-3442/SA922-A90554B-R29-C37.bam

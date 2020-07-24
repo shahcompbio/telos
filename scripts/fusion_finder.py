@@ -7,6 +7,7 @@ import os
 import gc
 import parabam
 import time
+import shutil
 from argparse import ArgumentParser
 
 def get_args():
@@ -119,14 +120,17 @@ def run(
 			subsets=subset_types,
 			constants=telbam_constants,
 			rule=rule,
-			# outbam_dir=outbam_dir
+			outbam_dir=outbam_dir
 		)
 
 		gc.collect()
 		final_output_paths.update(telbam_paths)
 
-	# os.rmdir(temp_dir)
+		print 'telbam_paths', telbam_paths
 
+	shutil.rmtree(temp_dir, ignore_errors=True)
+
+	print 'final_output_paths', final_output_paths
 	return final_output_paths
 
 
@@ -135,7 +139,7 @@ if __name__ == '__main__':
 
 	input_paths = txt_to_list(argv.input_bams)
 
-	print input_paths
+	# print input_paths
 
 	for bam in input_paths:
 		print bam

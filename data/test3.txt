@@ -3,7 +3,6 @@
 /juno/work/shah/tantalus/single_cell_indexing/bam/A90554B/grch37/BWA_MEM_0_7_6A/numlanes_9/SC-3442/SA922-A90554B-R29-C37.bam
 /juno/work/shah/tantalus/single_cell_indexing/bam/A90554B/grch37/BWA_MEM_0_7_6A/numlanes_9/SC-3442/SA922-A90554B-R29-C38.bam
 /juno/work/shah/tantalus/single_cell_indexing/bam/A90554B/grch37/BWA_MEM_0_7_6A/numlanes_9/SC-3442/SA922-A90554B-R29-C39.bam
-/juno/work/shah/tantalus/single_cell_indexing/bam/A90554B/grch37/BWA_MEM_0_7_6A/numlanes_9/SC-3442/SA922-A90554B-R29-C40.bam
 /juno/work/shah/tantalus/single_cell_indexing/bam/A90554B/grch37/BWA_MEM_0_7_6A/numlanes_9/SC-3442/SA922-A90554B-R29-C41.bam
 /juno/work/shah/tantalus/single_cell_indexing/bam/A90554B/grch37/BWA_MEM_0_7_6A/numlanes_9/SC-3442/SA922-A90554B-R29-C42.bam
 /juno/work/shah/tantalus/single_cell_indexing/bam/A90554B/grch37/BWA_MEM_0_7_6A/numlanes_9/SC-3442/SA922-A90554B-R29-C43.bam

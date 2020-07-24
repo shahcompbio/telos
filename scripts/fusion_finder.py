@@ -112,7 +112,7 @@ def run(
 			subsets=subset_types,
 			constants=telbam_constants,
 			rule=rule,
-			outbam_dir=outbam_dir
+			# outbam_dir=outbam_dir
 		)
 
 		gc.collect()
@@ -128,5 +128,9 @@ if __name__ == '__main__':
 
 	input_paths = txt_to_list(argv.input_bams)
 
-	run(input_paths, argv.outbam_dir)
+	print(input_paths)
+
+	for bam in input_paths:
+		print(bam)
+		run([bam], argv.outbam_dir)
 

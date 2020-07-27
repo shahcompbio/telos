@@ -110,17 +110,16 @@ def run(
 			keep_in_temp=keep_in_temp,
 		)
 
-		print 'input_path', input_path
-		print 'subset_types', subset_types
-		print 'telbam_constants', telbam_constants
-		print 'outbam_dir', outbam_dir
+		# print 'input_path', input_path
+		# print 'subset_types', subset_types
+		# print 'telbam_constants', telbam_constants
+		# print 'outbam_dir', outbam_dir
 		# call to parabam subset
 		telbam_paths = subset_interface.run(
 			input_paths=[input_path],
 			subsets=subset_types,
 			constants=telbam_constants,
 			rule=rule,
-			outbam_dir=outbam_dir
 		)
 
 		gc.collect()
@@ -130,8 +129,8 @@ def run(
 			for key, item in v.iteritems():
 				temp_output_path = item
 
-		print 'telbam_paths', telbam_paths
-		print 'temp_output_path', temp_output_path
+		# print 'telbam_paths', telbam_paths
+		# print 'temp_output_path', temp_output_path
 
 	basename = os.path.basename(temp_output_path)
 	new_basename = basename.replace('_telbam', '_fusions')

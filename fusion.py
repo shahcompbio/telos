@@ -28,5 +28,8 @@ if __name__ == '__main__':
 	# TODO: this loop should be submitting an LSF job for each bam instead of waiting for run() to finish before moving onto next bam
 	for bam in input_paths:
 		print bam
-		subprocess.call("bsub python scripts/fusion_finder.py -i {bam} -o {out}".format(bam=bam, out=argv.outbam_dir), shell=True)
+		subprocess.call("bsub -W {time} -M{mem} -R\"span[hosts=1] select[mem>{mem}] rusage[mem={mem}]\" -o out.txt -e err.txt \
+			python scripts/fusion_finder.py -i {bam} -o {out}".
+			format(bam=bam, out=argv.outbam_dir, time="6:00", mem="24"),
+			shell=True)
 

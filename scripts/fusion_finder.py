@@ -1,7 +1,7 @@
 """
 Subset BAM files to only include reads with evidence of direct telomere fusions.
 """
-
+import random
 import sys
 import os
 import gc
@@ -65,7 +65,7 @@ def run(
 			Useful for incorporation into pipelines"""
 
 	if temp_dir is None:
-		temp_dir = "telos_temp_" + str(time.time())
+		temp_dir = "telos_temp_" + str(time.time()) + str(random.randint(0, 99999))
 		temp_dir = temp_dir.replace('.', '_')
 
 	print 'temp_dir', temp_dir

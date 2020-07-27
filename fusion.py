@@ -28,8 +28,5 @@ if __name__ == '__main__':
 	# TODO: this loop should be submitting an LSF job for each bam instead of waiting for run() to finish before moving onto next bam
 	for bam in input_paths:
 		print bam
-		# args = ['python', 'scripts/fusion_finder.py', '-i', str(bam), '-o', str(argv.outbam_dir)]
-		# print args
-		# p = subprocess.Popen(args, shell=True)
 		subprocess.call("bsub python scripts/fusion_finder.py -i {bam} -o {out}".format(bam=bam, out=argv.outbam_dir), shell=True)
 

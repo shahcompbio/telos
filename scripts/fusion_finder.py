@@ -48,7 +48,7 @@ def rule(reads, constants, master):
 
 def run( 
 		input_paths, 
-		outbam_dir=None, 
+		outbam_dir, 
 		temp_dir=None, 
 		task_size=250000, 
 		total_procs=8,
@@ -68,12 +68,10 @@ def run(
 		temp_dir = "telos_temp_" + str(time.time()) + str(random.randint(0, 99999))
 		temp_dir = temp_dir.replace('.', '_')
 
-	print 'temp_dir', temp_dir
 	if not os.path.exists(temp_dir):
 		try:
 			os.makedirs(temp_dir)
 		except:
-			# raise ValueError(f'Error: can not find temp_dir path and could not make it either: \'{temp_dir}\'.\n')
 			raise ValueError('Error: can not find temp_dir path and could not make it either')
 
 	subset_types = ["telbam"]
@@ -83,22 +81,8 @@ def run(
 	telbam_constants = {"thresh": 1, "tel_pats": tel_pats}
 
 	final_output_paths = {}
-
-	keep_in_temp = outbam_dir is None
-	if not keep_in_temp:
-		# check if the folder is writable
-		if not os.path.exists(outbam_dir):
-			try:
-				os.makedirs(outbam_dir)
-			except:
-				# raise ValueError(f'Error: can not find outbam_dir path and could not make it either: \'{outbam_dir}\'.\n')
-				raise ValueError('Error: can not find outbam_dir path and could not make it either')
-		if not os.access(outbam_dir, os.W_OK | os.X_OK):
-			# raise ValueError(f'Error: do not have right permission to write into outbam_dir path: \'{outbam_dir}\'.\n')
-			raise ValueError('Error: do not have right permission to write into outbam_dir path')
-
+	
 	for input_path in input_paths:
-
 		subset_interface = parabam.Subset(
 			temp_dir=temp_dir,
 			total_procs=total_procs,
@@ -107,13 +91,9 @@ def run(
 			verbose=verbose,
 			pair_process=True,
 			include_duplicates=True,
-			keep_in_temp=keep_in_temp,
+			keep_in_temp=True
 		)
 
-		# print 'input_path', input_path
-		# print 'subset_types', subset_types
-		# print 'telbam_constants', telbam_constants
-		# print 'outbam_dir', outbam_dir
 		# call to parabam subset
 		telbam_paths = subset_interface.run(
 			input_paths=[input_path],
@@ -122,6 +102,7 @@ def run(
 			rule=rule,
 		)
 
+		print "telbam_paths:", telbam_paths
 		gc.collect()
 		final_output_paths.update(telbam_paths)
 
@@ -129,9 +110,7 @@ def run(
 			for key, item in v.iteritems():
 				temp_output_path = item
 
-		# print 'telbam_paths', telbam_paths
-		# print 'temp_output_path', temp_output_path
-
+	print "temp_output_path:", temp_output_path
 	basename = os.path.basename(temp_output_path)
 	new_basename = basename.replace('_telbam', '_fusions')
 	final_output = str(outbam_dir) + '/' + str(new_basename)

@@ -13,7 +13,7 @@ from argparse import ArgumentParser
 def get_args():
 	p = ArgumentParser()
 
-	p.add_argument('-i', '--input_bams', type=str, help='txt file containing a list of BAM files (one per line)')
+	p.add_argument('-i', '--input', type=str, help='BAM file input')
 	p.add_argument('-o', '--outbam_dir', type=str, help='directory to store output telbams')
 	return p.parse_args()
 
@@ -147,11 +147,5 @@ def run(
 if __name__ == '__main__':
 	argv = get_args()
 
-	input_paths = txt_to_list(argv.input_bams)
-
-	# print input_paths
-
-	for bam in input_paths:
-		print bam
-		run([bam], argv.outbam_dir)
+	run([argv.input], argv.outbam_dir)
 

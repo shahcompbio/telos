@@ -44,7 +44,7 @@ if __name__ == '__main__':
 
 	# TODO: figure out why process communication errors occur sporadically
 	for bam in input_paths:
-		subprocess.call("bsub -W {time} -M{mem} -R\"span[hosts=1] select[mem>{mem}] rusage[mem={mem}]\" \
+		subprocess.check_call("bsub -W {time} -M{mem} -R\"span[hosts=1] select[mem>{mem}] rusage[mem={mem}]\" \
 			-o out.txt -e err.txt \
 			python scripts/fusion_finder.py -i {bam} -o {out}".
 			format(bam=bam, out=argv.outbam_dir, time="6:00", mem="8"),

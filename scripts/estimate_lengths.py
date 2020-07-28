@@ -12,14 +12,15 @@ def get_telbam(path_to_bam):
 	output_telbam = path_to_bam.replace(".bam", "_telbam.bam")
 
 	# create appropriate telbam file using telomerecat
-	subprocess.check_call(
-		"telomerecat bam2telbam {input}".
-		format(input=path_to_bam),
-		shell=True)
-	subprocess.check_call(
-		"mv {temp_telbam} {output}".
-		format(temp_telbam=temp_telbam, output=output_telbam),
-		shell=True)
+	if not os.path.exists(output_telbam):
+		subprocess.check_call(
+			"telomerecat bam2telbam {input}".
+			format(input=path_to_bam),
+			shell=True)
+		subprocess.check_call(
+			"mv {temp_telbam} {output}".
+			format(temp_telbam=temp_telbam, output=output_telbam),
+			shell=True)
 
 	return output_telbam
 

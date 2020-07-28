@@ -38,6 +38,8 @@ def find_num_tel(df, hmm_file_paths):
 		cn_pieces.append(piece)
 	cn = pd.concat(cn_pieces)
 	cn = cn.reset_index()
+	cn = cn.query('gc > 0')
+	cn = cn.query('map > 0.75')
 	cn.set_index('cell_id', inplace=True)
 
 	# use hmmcopy info to estimate number of telomeres for each cell in df

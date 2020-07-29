@@ -8,6 +8,7 @@ import gc
 import parabam
 import time
 import shutil
+import itertools
 from argparse import ArgumentParser
 
 def get_args():
@@ -18,14 +19,20 @@ def get_args():
 	return p.parse_args()
 
 
-def txt_to_list(input_bams):
-	with open(input_bams, 'r') as f:
-		out = []
-		for line in f:
-			entry = line.strip()
-			if ".bam" in entry:
-				out.append(entry)
-	return out
+def cycle_combos(t_string, c_string):
+	""" Create all 12-mer strings that could be evidence of a fusion. """
+	# get all cycles of the two telomeric patterns
+	t_cycles = [t_string[i:] + t_string[:i] for i in range(len(t_string))]
+	c_cycles = [c_string[i:] + c_string[:i] for i in range(len(c_string))]
+
+	# find pairwise combinations between two types of 6-mers
+	prod = list(itertools.product(t_cycles, c_cycles))
+	tel_pats = []
+	for tup in prod:
+		temp_str = str(tup[0]) + str(tup[1])
+		tel_pats.append(temp_str)
+
+	return tel_pats
 
 
 def rule(reads, constants, master):
@@ -75,7 +82,7 @@ def run(
 			raise ValueError('Error: can not find temp_dir path and could not make it either')
 
 	subset_types = ["telbam"]
-	tel_pats = ["TTAGGGTTAGGG", "CCCTAACCCTAA"]
+	tel_pats = cycle_combos("TTAGGG", "CCCTAA")
 
 	# need to define my constants and engine here:
 	telbam_constants = {"thresh": 1, "tel_pats": tel_pats}

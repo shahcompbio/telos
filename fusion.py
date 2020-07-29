@@ -32,13 +32,17 @@ if __name__ == '__main__':
 	if os.path.exists("err.txt"):
 		os.remove("err.txt")
 
-	if not os.path.exists(argv.outbam_dir):
+	# remove slash if included as last character
+	if argv.outbam_dir[-1] == '/':
+		outbam_dir = argv.outbam_dir[:-1]
+
+	if not os.path.exists(outbam_dir):
 		try:
-			os.makedirs(argv.outbam_dir)
+			os.makedirs(outbam_dir)
 		except:
 			# raise ValueError(f'Error: can not find outbam_dir path and could not make it either: \'{outbam_dir}\'.\n')
 			raise ValueError('Error: can not find outbam_dir path and could not make it either')
-	if not os.access(argv.outbam_dir, os.W_OK | os.X_OK):
+	if not os.access(outbam_dir, os.W_OK | os.X_OK):
 		# raise ValueError(f'Error: do not have right permission to write into outbam_dir path: \'{outbam_dir}\'.\n')
 		raise ValueError('Error: do not have right permission to write into outbam_dir path')
 
@@ -47,6 +51,6 @@ if __name__ == '__main__':
 		subprocess.check_call("bsub -W {time} -M{mem} -R\"span[hosts=1] select[mem>{mem}] rusage[mem={mem}]\" \
 			-o out.txt -e err.txt \
 			python scripts/fusion_finder.py -i {bam} -o {out}".
-			format(bam=bam, out=argv.outbam_dir, time="6:00", mem="8"),
+			format(bam=bam, out=outbam_dir, time="1:00", mem="8"),
 			shell=True)
 

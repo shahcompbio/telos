@@ -8,7 +8,7 @@ from scripts.estimate_lengths import estimate_lengths
 parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--input_cells', type=str,
 	help='CSV file that stores `BAM_path`, `cov` (coverage, optional), and num_tel (number of telomeres, optional)')
-parser.add_argument('-hmm', '--hmmcopy', type=str, nargs='?',
+parser.add_argument('-hmm', '--hmmcopy', type=str, nargs='?', default=None,
 	help='paths to hmmcopy output for the libraries containing the input_cells')
 parser.add_argument('-o', '--output', type=str,
 	help='path for writing the output csv file')
@@ -24,6 +24,8 @@ def main():
 	df = load_input(args.input_cells)
 	print df.head()
 
+	# TODO: should I swtich this to a snakemake workflow?
+	# not sure if I could execute functions/rules dependent on columns of input file (like I'm doing here) if I switch to snakemake
 	assert 'BAM_path' in df.columns
 
 	if 'cov' not in df.columns:
@@ -32,7 +34,13 @@ def main():
 		print 'done estimating coverage'
 
 	if 'num_tel' not in df.columns:
-		df = find_num_tel(df, args.hmmcopy)
+		if args.hmmcopy is None:
+			# TODO: run the single cell pipeline to get hmmcopy output with all files stored in a list much like args.hmmcopy would be
+			# hmmcopy_paths = run_single_cell_pipeline()
+			# df = find_num_tel(df, hmmcopy_paths)
+			pass
+		else:
+			df = find_num_tel(df, args.hmmcopy)
 		print df
 
 	estimate_lengths(df, args.output)

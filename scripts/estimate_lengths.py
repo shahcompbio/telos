@@ -25,36 +25,6 @@ def get_telbam(path_to_bam):
 	return output_telbam
 
 
-def subset_telbams(temp_telbam_list, temp_good_telbams, temp_bad_telbams, k=5):
-	good_telbams = []
-	bad_telbams = []
-	with open(temp_telbam_list, 'rb') as f:
-		for line in f:
-			telbam_file = line.strip()
-			try:
-				file = pysam.AlignmentFile(telbam_file, "rb")
-				count = file.count(until_eof=True)  # find number of reads in telbam
-				if count < k:
-					bad_telbams.append(telbam_file)
-				else:
-					good_telbams.append(telbam_file)
-			except:
-				bad_telbams.append(telbam_file)
-		f.close()
-
-	# write output for good telbams
-	with open(temp_good_telbams, 'w') as f:
-		for item in good_telbams:
-			f.write(item + '\n')
-		f.close()
-
-	# write output for good telbams
-	with open(temp_bad_telbams, 'w') as f:
-		for item in bad_telbams:
-			f.write(item + '\n')
-		f.close()
-
-
 def make_pseudobulk(temp_good_telbams, temp_pseudobulk):
 	subprocess.check_call(
 		"module load samtools ; samtools merge {output} -b {input}".
@@ -118,33 +88,42 @@ def get_lengths(temp_good_telbams, temp_bad_telbams, temp_pseudobulk, csv_output
 def estimate_lengths(df, path_to_output):
 	df['telbam_name'] = None
 
-	temp_telbam_list = "temp_telbam_list.txt"
 	temp_good_telbams = "temp_good_telbams.txt"
 	temp_good_telbams_cov_ntel = "temp_good_telbams_cov_ntel.txt"
 	temp_bad_telbams = "temp_bad_telbams.txt"
 	temp_pseudobulk = "temp_pseudobulk.bam"
 	temp_output_csv = "temp_telos_output.csv"
 
+	# TODO: find some way to get telbams in parallel
+	# either through submitting job with bsub & waiting for output file before continuing (with snakemake workflow)
+	# or I try splitting df up into chunks and use multiprocessing to run in parallel
 	for index, row in df.iterrows():
 		telbam_path = get_telbam(row['BAM_path'])  # make the telbam
 		df['telbam_name'][index] = telbam_path
 
 	df["Sample"] = df["telbam_name"].apply(lambda x: os.path.splitext(os.path.basename(x))[0].replace("_telbam", "") + ".bam")
 
-	# make temporary txt file containing one telbam path per line
-	df.to_csv(temp_telbam_list, sep='\n', columns=['telbam_name'], index=False, header=False)
+	# subset telbams based on coverage
+	good_df = df.query('cov >= 0.005')
+	bad_df = df.query('cov < 0.005')
 
-	# subset to find the "good" telbams
-	subset_telbams(temp_telbam_list, temp_good_telbams, temp_bad_telbams)
+	# write good & bad telbams to separate lists
+	good_df.to_csv(temp_good_telbams, sep='\n', columns=['telbam_name'], index=False, header=False)
+	bad_df.to_csv(temp_bad_telbams, sep='\n', columns=['telbam_name'], index=False, header=False)
 
 	# create a pseudobulk using the good telbams
+	print "making pseudobulk"
 	make_pseudobulk(temp_good_telbams, temp_pseudobulk)
+	print "done making pseudobulk"
 
 	# use legend to add coverage and number of telomeres for all the good telbams
 	add_cov_ntel_to_good_telbams(temp_good_telbams, temp_good_telbams_cov_ntel, df)
 
+	# TODO: this step is time intensive so it should probably be done with bsub if entire telos workflow/command isn't a bsub job itself
 	# estimate telomere lengths, creating temporary output.csv file
+	print "getting lengths"
 	get_lengths(temp_good_telbams_cov_ntel, temp_bad_telbams, temp_pseudobulk, temp_output_csv)
+	print "done getting lengths"
 
 	# merge temporary output.csv with legend dataframe
 	telos_df = pd.read_csv(temp_output_csv)
@@ -153,7 +132,6 @@ def estimate_lengths(df, path_to_output):
 	df.drop(columns=["Sample"], inplace=True)
 
 	# remove temporary files
-	os.remove(temp_telbam_list)
 	os.remove(temp_bad_telbams)
 	os.remove(temp_good_telbams)
 	os.remove(temp_good_telbams_cov_ntel)

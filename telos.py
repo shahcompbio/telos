@@ -40,7 +40,7 @@ def main():
 			# df = find_num_tel(df, hmmcopy_paths)
 			pass
 		else:
-			df = find_num_tel(df, args.hmmcopy)
+			df = find_num_tel(df, args.hmmcopy, '/juno/work/shah/funnellt/projects/rdc-mutsig/data/ref/gap_hg19.txt')
 		print df
 
 	estimate_lengths(df, args.output)

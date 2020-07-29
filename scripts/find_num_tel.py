@@ -30,7 +30,7 @@ def find_num_tel(df, hmm_file_paths, gaps_path=None):
 	# find ploidy for each cell using hmmcopy info
 	summary_func = 'median'
 	if gaps_path is not None:
-		gaps = pd.read_csv(argv.gaps, sep='\t', dtype={'chrom': str})
+		gaps = pd.read_csv(gaps_path, sep='\t', dtype={'chrom': str})
 
 		centromeres = gaps.loc[
 			gaps['type'] == 'centromere', ['chrom', 'chromStart', 'chromEnd']

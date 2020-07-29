@@ -29,5 +29,5 @@ dependencies:
     - python-dateutil==2.8.1
     - pytz==2019.3
     - six==1.14.0
-    - git+https://github.com/adamcweiner/telomerecat.git@e8bf4e49f9f01c875bae93dc5e83aa93a3d34566
+    - git+https://github.com/adamcweiner/telomerecat.git@fbd7379eba55bf84bcca9aa731c7cd70b7f63788
 prefix: /home/weinera2/miniconda3/envs/telos

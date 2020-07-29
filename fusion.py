@@ -36,17 +36,16 @@ if __name__ == '__main__':
 	if argv.outbam_dir[-1] == '/':
 		outbam_dir = argv.outbam_dir[:-1]
 
+	# make sure output directory is present with proper permissions
 	if not os.path.exists(outbam_dir):
 		try:
 			os.makedirs(outbam_dir)
 		except:
-			# raise ValueError(f'Error: can not find outbam_dir path and could not make it either: \'{outbam_dir}\'.\n')
 			raise ValueError('Error: can not find outbam_dir path and could not make it either')
 	if not os.access(outbam_dir, os.W_OK | os.X_OK):
-		# raise ValueError(f'Error: do not have right permission to write into outbam_dir path: \'{outbam_dir}\'.\n')
 		raise ValueError('Error: do not have right permission to write into outbam_dir path')
 
-	# TODO: figure out why process communication errors occur sporadically
+	# submit each bam's job to the cluster, effectively allowing them to run in parallel on different nodes
 	for bam in input_paths:
 		subprocess.check_call("bsub -W {time} -M{mem} -R\"span[hosts=1] select[mem>{mem}] rusage[mem={mem}]\" \
 			-o out.txt -e err.txt \
